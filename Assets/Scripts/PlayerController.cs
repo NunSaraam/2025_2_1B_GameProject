@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded;                                    //땅이 있는지 판별
     private bool wasGrounded;                                   //직전 프레임에 땅에 있었는지 판단
 
+    private bool isUIMode = false;                              //UI 모드 설정
+
     private void Start()
     {
 
@@ -46,12 +48,21 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        CheckGrounded();
-        HandleLanding();
-        HandleMovement();
-        UpdateAnimator();
-        HandleAttack();
-        HandleJump();
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            ToggleCursorLock();
+        }
+
+        if (!isUIMode)
+        {
+            CheckGrounded();
+            HandleLanding();
+            HandleMovement();
+            UpdateAnimator();
+            HandleAttack();
+            HandleJump();
+        }
+
     }
 
     void HandleMovement()               //이동 함수 제작
@@ -188,5 +199,32 @@ public class PlayerController : MonoBehaviour
                 animator.SetTrigger("AttackTrigger");
             }
         }
+    }
+
+    public void SetCursorLock(bool lockCursor)                  //마우스 락 설정 함수
+    {
+        if (lockCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            isUIMode = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            isUIMode = true;
+        }
+    }
+
+    public void ToggleCursorLock()
+    {
+        bool ShouldLock = Cursor.lockState != CursorLockMode.Locked;
+        SetCursorLock(ShouldLock);
+    }
+
+    public void SetUIMode(bool uiMode)
+    {
+        SetCursorLock(!uiMode);
     }
 }
